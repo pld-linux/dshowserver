@@ -4,7 +4,7 @@
 
 %define		pname		dshowserver
 %define 	_snap		svn
-%define		_rel		73
+%define		_rel		82
 
 Summary:	Win32 CoreAVC H.264 codec helper.
 Summary(pl.UTF-8):	Serwer windowsowego kodeka CoreAVC H.264.
@@ -41,17 +41,16 @@ Jezeli twoj system jest 64 bitowy. Uzyj statycznych binariow
 zbudowanych w 32 bitowym srodowisku.
 
 
-%package -n registercodec
+%package -n registercodec%{?with_static:-static}
 Summary:        Utility to register win32 CoreAVC H.264 codec.
 Summary(pl.UTF-8):      Narzedzie do rejestracji windowsowego kodeka CoreAVC H.264.
 Group:          X11/Multimedia
 
-%description -n registercodec
+%description -n registercodec%{?with_static:-static}
 Utility to register win32 CoreAVC H.264 codec for usage with mythtv/mplayer/xine.
 
-%description -l pl.UTF-8 -n registercodec
+%description -l pl.UTF-8 -n registercodec%{?with_static:-static}
 Narzedzie do przeprowadzenia rejestracji komercyjnego  kodeka CoreAVC H.264.
-
 
 %prep
 cd %{_builddir}
@@ -59,12 +58,11 @@ rm -rf %{pname}-%{version}
 tar jxvf %{SOURCE0}
 cd %{pname}-%{version}
 
-
 %patch0 -p1
 
 %build
 cd %{pname}-%{version}
-make -C dshowserver %{?with_static:STATIC=1} && %{!?with_static:cd loader && make && cd ../}
+make -C dshowserver %{?with_static:STATIC=1} 
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -74,7 +72,7 @@ install -d $RPM_BUILD_ROOT%{_bindir}
 install -d $RPM_BUILD_ROOT%{_mandir}/man1
 
 install dshowserver/dshowserver $RPM_BUILD_ROOT%{_bindir}/dshowserver
-%{!?with_static:install loader/registercodec $RPM_BUILD_ROOT%{_bindir}/registercodec}
+install dshowserver/registercodec $RPM_BUILD_ROOT%{_bindir}/registercodec
 
 install man/* $RPM_BUILD_ROOT%{_mandir}/man1
 
@@ -89,8 +87,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,video) %{_bindir}/dshowserver
 %attr(644,root,root) %{_mandir}/man1/ds*
 
-%if %{without static}
-%files -n registercodec
+%files -n registercodec%{?with_static:-static}
 %attr(755,root,video) %{_bindir}/registercodec
 %attr(644,root,root) %{_mandir}/man1/re*
-%endif
