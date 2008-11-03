@@ -1,27 +1,23 @@
-# TODO
-# - err, get rid of name mungling and create real -static package or some other subpackages
-# - static bcond and BR mismatches
-# - missing source0 (due lack of md5)
 
 # Conditional build:
 %bcond_with	static	# static package for use with x86_64 systems
 
 %define 	snap		svn
 %define		extraver	82
-%define		pname		dshowserver
+%define		_version	%{snap}%{extraver}
+
 Summary:	Win32 CoreAVC H.264 codec helper
 Summary(pl.UTF-8):	Serwer windowsowego kodeka CoreAVC H.264.
-Name:		%{pname}%{?with_static:-static}
+Name:		dshowserver
 Version:	0.%{snap}%{extraver}
 Release:	0.1
 License:	GPL
 Group:		X11/Applications/Multimedia
-Source0:	%{pname}-%{version}.tar.bz2
-# Source0-md5:
-Patch0:		%{pname}-codecspath.patch
-URL:		http://code.google.com/
-# XXX actual without static bcond too??
-BuildRequires:	glibc-static
+Source0:	%{name}-%{version}.tar.bz2
+# Source0-md5:	648492583080c4359040358453670452
+Patch0:		%{name}-codecspath.patch
+URL:		http://code.google.com/p/coreavc-for-linux/
+%{?with_static:BuildRequires:     glibc-static}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -45,21 +41,21 @@ x86_64. Jezeli twoj system jest 64 bitowy. Uzyj statycznych binariow
 zbudowanych w 32 bitowym srodowisku.
 
 
-%package -n registercodec%{?with_static:-static}
+%package -n registercodec
 Summary:	Utility to register win32 CoreAVC H.264 codec
 Summary(pl.UTF-8):	Narzedzie do rejestracji windowsowego kodeka CoreAVC H.264.
 Group:		X11/Applications/Multimedia
 
-%description -n registercodec%{?with_static:-static}
+%description -n registercodec
 Utility to register win32 CoreAVC H.264 codec for usage with
 mythtv/mplayer/xine.
 
-%description -n registercodec%{?with_static:-static} -l pl.UTF-8
+%description -n registercodec -l pl.UTF-8
 Narzedzie do przeprowadzenia rejestracji komercyjnego kodeka CoreAVC
 H.264.
 
 %prep
-%setup -q -n %{pname}-%{version}
+%setup -q -n %{name}-%{_version}
 %patch0 -p1
 
 %build
@@ -82,7 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,video) %{_bindir}/dshowserver
 %{_mandir}/man1/ds*
 
-%files -n registercodec%{?with_static:-static}
+%files -n registercodec
 %defattr(644,root,root,755)
 %attr(755,root,video) %{_bindir}/registercodec
 %{_mandir}/man1/re*
