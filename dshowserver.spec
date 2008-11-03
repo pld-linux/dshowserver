@@ -1,23 +1,28 @@
-
 # Conditional build:
 %bcond_with	static	# static package for use with x86_64 systems
+#
 
-%define 	snap		svn
-%define		extraver	82
-%define		_version	%{snap}%{extraver}
+%ifarch %{x8664}
+%define		with_static	1
+%endif
 
+%define		svn			82
+%define		rel			0.1
 Summary:	Win32 CoreAVC H.264 codec helper
 Summary(pl.UTF-8):	Serwer windowsowego kodeka CoreAVC H.264.
 Name:		dshowserver
-Version:	0.%{snap}%{extraver}
-Release:	0.1
+Version:	0.1
+Release:	0.%{svn}.%{rel}
 License:	GPL
 Group:		X11/Applications/Multimedia
-Source0:	%{name}-%{version}.tar.bz2
+Source0:	%{name}-0.svn%{svn}.tar.bz2
 # Source0-md5:	648492583080c4359040358453670452
 Patch0:		%{name}-codecspath.patch
+Patch1:		%{name}-optflags.patch
 URL:		http://code.google.com/p/coreavc-for-linux/
 %{?with_static:BuildRequires:     glibc-static}
+BuildRequires:	rpmbuild(macros) >= 1.453
+BuildRequires:	sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -40,7 +45,6 @@ mplayer i xine. Dshowserver moze byc uzyty w architekturach x86 i
 x86_64. Jezeli twoj system jest 64 bitowy. Uzyj statycznych binariow
 zbudowanych w 32 bitowym srodowisku.
 
-
 %package -n registercodec
 Summary:	Utility to register win32 CoreAVC H.264 codec
 Summary(pl.UTF-8):	Narzedzie do rejestracji windowsowego kodeka CoreAVC H.264.
@@ -55,19 +59,26 @@ Narzedzie do przeprowadzenia rejestracji komercyjnego kodeka CoreAVC
 H.264.
 
 %prep
-%setup -q -n %{name}-%{_version}
+%setup -q -n %{name}-svn%{svn}
 %patch0 -p1
+%patch1 -p1
+
+%if "%{cc_version}" < "3.4"
+# CC version is arbitary (just to be > 3.3)
+%{__sed} -i -e 's/-Wno-pointer-sign//;s/-Wdeclaration-after-statement//' {loader,dshowserver}/Makefile
+%endif
 
 %build
-%{__make} -C dshowserver %{?with_static:STATIC=1}
+%{__make} -C dshowserver \
+	CC="%{__cc}" \
+	OPTFLAGS="%{rpmcflags}" \
+	%{?with_static:STATIC=1}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_bindir}
-install -d $RPM_BUILD_ROOT%{_mandir}/man1
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1}
 install dshowserver/dshowserver $RPM_BUILD_ROOT%{_bindir}/dshowserver
 install dshowserver/registercodec $RPM_BUILD_ROOT%{_bindir}/registercodec
-
 cp -a man/* $RPM_BUILD_ROOT%{_mandir}/man1
 
 %clean
