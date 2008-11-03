@@ -1,6 +1,7 @@
 # TODO
 # - err, get rid of name mungling and create real -static package or some other subpackages
 # - static bcond and BR mismatches
+# - missing source0 (due lack of md5)
 
 # Conditional build:
 %bcond_with	static	# static package for use with x86_64 systems
@@ -11,7 +12,7 @@
 Summary:	Win32 CoreAVC H.264 codec helper
 Summary(pl.UTF-8):	Serwer windowsowego kodeka CoreAVC H.264.
 Name:		%{pname}%{?with_static:-static}
-Version:	%{snap}%{extraver}
+Version:	0.%{snap}%{extraver}
 Release:	0.1
 License:	GPL
 Group:		X11/Applications/Multimedia
@@ -19,6 +20,7 @@ Source0:	%{pname}-%{version}.tar.bz2
 # Source0-md5:
 Patch0:		%{pname}-codecspath.patch
 URL:		http://code.google.com/
+# XXX actual without static bcond too??
 BuildRequires:	glibc-static
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
