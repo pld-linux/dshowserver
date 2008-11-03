@@ -2,10 +2,6 @@
 %bcond_with	static	# static package for use with x86_64 systems
 #
 
-%ifarch %{x8664}
-%define		with_static	1
-%endif
-
 %define		svn			82
 %define		rel			0.1
 Summary:	Win32 CoreAVC H.264 codec helper
@@ -20,10 +16,21 @@ Source0:	%{name}-0.svn%{svn}.tar.bz2
 Patch0:		%{name}-codecspath.patch
 Patch1:		%{name}-optflags.patch
 URL:		http://code.google.com/p/coreavc-for-linux/
+%ifarch %{x8664}
+BuildRequires:	gcc-multilib
+%{?with_static:BuildRequires:     glibc-static(i686)}
+%else
 %{?with_static:BuildRequires:     glibc-static}
+%endif
 BuildRequires:	rpmbuild(macros) >= 1.453
 BuildRequires:	sed >= 4.0
+ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		x8664_flags	-m32
+%define		specflags_x86_64 %{x8664_flags}
+%define		specflags_amd64	%{x8664_flags}
+%define		specflags_ia32e	%{x8664_flags}
 
 %description
 CoreAVC is a proprietary Windows codec for H.264 video decoding. It is
@@ -69,10 +76,19 @@ H.264.
 %endif
 
 %build
-%{__make} -C dshowserver \
-	CC="%{__cc}" \
-	OPTFLAGS="%{rpmcflags}" \
-	%{?with_static:STATIC=1}
+cat << 'EOF' > config.mak
+override CC = %{__cc}
+override OPTFLAGS = %{rpmcflags}
+override LDFLAGS = %{rpmldflags}
+
+%{?with_static:STATIC = 1}
+
+AR = ar
+RANLIB = ranlib
+OBJDIR = ../objs
+EOF
+
+%{__make} -C dshowserver
 
 %install
 rm -rf $RPM_BUILD_ROOT
