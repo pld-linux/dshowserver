@@ -1,0 +1,76 @@
+diff -urN dshowserver.orig/config.mak dshowserver-svn101/config.mak
+--- dshowserver.orig/config.mak	2010-01-09 18:46:57.000000000 +0100
++++ dshowserver-svn101/config.mak	2010-01-09 19:35:48.000000000 +0100
+@@ -23,6 +23,7 @@
+ RANLIB ?= ranlib
+ OBJDIR ?= ../objs
+ 
+-PREFIX ?= /usr/local
++PREFIX ?= /usr
+ PREFIX_EXE ?= $(PREFIX)/bin
+-PREFIX_SHARE ?= $(PREFIX)/share/dshowserver
++PREFIX_LIBS ?= $(PREFIX)/lib/dshowserver
++PREFIX_REAL ?= /usr/lib/dshowserver
+diff -urN dshowserver.orig/dshowserver/Makefile dshowserver-svn101/dshowserver/Makefile
+--- dshowserver.orig/dshowserver/Makefile	2010-01-09 18:47:01.000000000 +0100
++++ dshowserver-svn101/dshowserver/Makefile	2010-01-09 19:36:17.000000000 +0100
+@@ -2,13 +2,13 @@
+ 
+ 
+ CFLAGS=-I../loader -Wdisabled-optimization -Wno-pointer-sign -Wdeclaration-after-statement -I. -Wall -Wno-switch -Wpointer-arith -Wredundant-decls -pipe -ffast-math -fomit-frame-pointer -D_LARGEFILE_SOURCE -D__WINE__ -DNOAVIFILE_HEADERS -DMPLAYER
+-CFLAGS+=-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
++OPTFLAGS:=-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
+ 
+ ifdef DEBUG
+-  CFLAGS+= -g
++  OPTFLAGS+= -g
+   LOADER_OPT = "DEBUG=1"
+ else
+-  CFLAGS+= -O2
++  OPTFLAGS+= -O2
+ endif
+ ifdef STATIC
+   STATICBUILD= -static
+@@ -28,6 +28,7 @@
+   endif
+ endif
+ 
++CFLAGS += $(OPTFLAGS)
+ LIBS += $(EXTRA_LIBS)
+ 
+ .PHONY: loader
+@@ -35,7 +36,7 @@
+ all: $(OBJDIR) dshowserver $(REGISTERCODEC)
+ 
+ dshowserver: $(OBJDIR)/server.o $(OBJDIR)/timeout_sem.o $(OBJDIR)/defaults.o $(OBJDIR)/crc32.o $(OBJDIR)/libloader.a
+-	$(CC) $(STATICBUILD) -o $@ $^ $(LIBS)
++	$(CC) $(CFLAGS) $(LDFLAGS) $(STATICBUILD) -o $@ $^ $(LIBS)
+ ifdef X_COMPILE
+ 	mv $@ $@.exe
+ 	echo "#!/bin/sh" > $@
+@@ -45,7 +46,7 @@
+ endif
+ 
+ registercodec: ../loader/modify_reg.c ../loader/registry.c
+-	$(CC) $(STATICBUILD) -I../loader -I../loader/compat -o $@ $<
++	$(CC) $(CFLAGS) $(LDFLAGS) $(STATICBUILD) -I../loader -I../loader/compat -o $@ $<
+ 
+ 
+ $(OBJDIR):
+@@ -72,13 +73,13 @@
+ 	rm -f dshowserver.exe*
+ 
+ install::
+-	mkdir -p $(PREFIX_SHARE)
++	mkdir -p $(PREFIX_LIBS)
+ 	mkdir -p $(PREFIX_EXE)
+ ifdef WINE_EXT
+-	cp dshowserver.$(WINE_EXT) $(PREFIX_SHARE)/
++	cp dshowserver.$(WINE_EXT) $(PREFIX_LIBS)/
+ 	echo "#!/bin/sh" > $(PREFIX_EXE)/dshowserver
+ 	echo "echo 'Starting wine dshowserver.$(WINE_EXT)'" >> $(PREFIX_EXE)/dshowserver
+-	echo 'wine $(PREFIX_SHARE)/dshowserver.$(WINE_EXT) $$*' >> $(PREFIX_EXE)/dshowserver
++	echo 'wine $(PREFIX_REAL)/dshowserver.$(WINE_EXT) $$*' >> $(PREFIX_EXE)/dshowserver
+ 	chmod +x $(PREFIX_EXE)/dshowserver
+ else
+ 	cp dshowserver $(PREFIX_EXE)/
