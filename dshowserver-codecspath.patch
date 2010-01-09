@@ -1,8 +1,8 @@
-diff -urN coreavc-for-linux.orig/loader/compat/config.h coreavc-for-linux-svn72/loader/compat/config.h
---- coreavc-for-linux.orig/loader/compat/config.h	2008-10-13 16:43:42.000000000 +0200
-+++ coreavc-for-linux-svn72/loader/compat/config.h	2008-10-13 17:17:33.000000000 +0200
-@@ -16,7 +16,7 @@
- #define WIN32_LOADER 1
+diff -urN dshowserver.orig/loader/compat/config.h dshowserver-svn101/loader/compat/config.h
+--- dshowserver.orig/loader/compat/config.h	2009-10-17 23:21:31.000000000 +0200
++++ dshowserver-svn101/loader/compat/config.h	2010-01-09 15:48:58.683806461 +0100
+@@ -14,7 +14,7 @@
+ #define HAVE_VSSCANF 1
  /* Win32 DLL support */
  #define USE_WIN32DLL 1
 -#define WIN32_PATH "/usr/lib/win32"
@@ -10,9 +10,9 @@ diff -urN coreavc-for-linux.orig/loader/compat/config.h coreavc-for-linux-svn72/
  /* DirectShow support */
  #define USE_DIRECTSHOW 1
  
-diff -urN coreavc-for-linux.orig/loader/elfdll.c coreavc-for-linux-svn72/loader/elfdll.c
---- coreavc-for-linux.orig/loader/elfdll.c	2008-10-13 16:43:43.000000000 +0200
-+++ coreavc-for-linux-svn72/loader/elfdll.c	2008-10-13 17:18:12.000000000 +0200
+diff -urN dshowserver.orig/loader/elfdll.c dshowserver-svn101/loader/elfdll.c
+--- dshowserver.orig/loader/elfdll.c	2009-10-17 23:21:33.000000000 +0200
++++ dshowserver-svn101/loader/elfdll.c	2010-01-09 15:45:54.188724360 +0100
 @@ -38,7 +38,7 @@
  extern void dump_exports(HMODULE hModule);
  /*---------------- END HACKS ---------------*/
@@ -22,21 +22,21 @@ diff -urN coreavc-for-linux.orig/loader/elfdll.c coreavc-for-linux-svn72/loader/
  extern char* def_path;
  
  struct elfdll_image
-diff -urN coreavc-for-linux.orig/loader/module.c coreavc-for-linux-svn72/loader/module.c
---- coreavc-for-linux.orig/loader/module.c	2008-10-13 16:43:43.000000000 +0200
-+++ coreavc-for-linux-svn72/loader/module.c	2008-10-13 17:18:12.000000000 +0200
+diff -urN dshowserver.orig/loader/module.c dshowserver-svn101/loader/module.c
+--- dshowserver.orig/loader/module.c	2009-10-17 23:21:33.000000000 +0200
++++ dshowserver-svn101/loader/module.c	2010-01-09 15:48:42.311805474 +0100
 @@ -365,7 +365,7 @@
  HMODULE WINAPI LoadLibraryExA(LPCSTR libname, HANDLE hfile, DWORD flags)
  {
  	WINE_MODREF *wm = 0;
 -	char* listpath[] = { "", "", "/usr/lib/win32", "/usr/local/lib/win32", 0 };
-+	char* listpath[] = { "", "", "/usr/lib/codecs", "/usr/local/lib/codecs", 0 };
++	char* listpath[] = { "", "", "/usr/lib/codecs", "/usr/local/lib/win32", 0 };
  	extern char* def_path;
  	char path[512];
  	char checked[2000];
-diff -urN coreavc-for-linux.orig/man/dshowserver.1 coreavc-for-linux-svn72/man/dshowserver.1
---- coreavc-for-linux.orig/man/dshowserver.1	2008-10-13 16:43:44.000000000 +0200
-+++ coreavc-for-linux-svn72/man/dshowserver.1	2008-10-13 17:19:08.000000000 +0200
+diff -urN dshowserver.orig/man/dshowserver.1 dshowserver-svn101/man/dshowserver.1
+--- dshowserver.orig/man/dshowserver.1	2009-10-17 23:21:34.000000000 +0200
++++ dshowserver-svn101/man/dshowserver.1	2010-01-09 15:49:42.628973022 +0100
 @@ -38,7 +38,7 @@
  .SH OPTIONS
  .IP "-c codec_name"

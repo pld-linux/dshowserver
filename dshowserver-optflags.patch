@@ -1,8 +1,8 @@
-diff -Nur dshowserver-svn82.orig/dshowserver/Makefile dshowserver-svn82.new/dshowserver/Makefile
---- dshowserver-svn82.orig/dshowserver/Makefile	2008-11-01 18:03:29.000000000 +0100
-+++ dshowserver-svn82.new/dshowserver/Makefile	2008-11-03 13:06:02.000000000 +0100
-@@ -1,13 +1,13 @@
- include ../config.mak
+diff -urN dshowserver.orig/dshowserver/Makefile dshowserver.patched/dshowserver/Makefile
+--- dshowserver.orig/dshowserver/Makefile	2010-01-09 13:33:17.000000000 +0100
++++ dshowserver.patched/dshowserver/Makefile	2010-01-09 16:00:46.301806057 +0100
+@@ -2,13 +2,13 @@
+ 
  
  CFLAGS=-I../loader -Wdisabled-optimization -Wno-pointer-sign -Wdeclaration-after-statement -I. -Wall -Wno-switch -Wpointer-arith -Wredundant-decls -pipe -ffast-math -fomit-frame-pointer -D_LARGEFILE_SOURCE -D__WINE__ -DNOAVIFILE_HEADERS -DMPLAYER
 -CFLAGS+=-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
@@ -18,20 +18,25 @@ diff -Nur dshowserver-svn82.orig/dshowserver/Makefile dshowserver-svn82.new/dsho
  endif
  ifdef STATIC
    STATICBUILD= -static
-@@ -31,6 +31,7 @@
-   REGISTERCODEC = registercodec
+@@ -28,6 +28,7 @@
+   endif
  endif
  
 +CFLAGS += $(OPTFLAGS)
  LIBS += $(EXTRA_LIBS)
  
  .PHONY: loader
-@@ -38,10 +39,10 @@
+@@ -35,7 +36,7 @@
  all: $(OBJDIR) dshowserver $(REGISTERCODEC)
  
- dshowserver: $(OBJDIR)/server.o $(OBJDIR)/timeout_sem.o $(OBJDIR)/libloader.a
+ dshowserver: $(OBJDIR)/server.o $(OBJDIR)/timeout_sem.o $(OBJDIR)/defaults.o $(OBJDIR)/crc32.o $(OBJDIR)/libloader.a
 -	$(CC) $(STATICBUILD) -o $@ $^ $(LIBS)
 +	$(CC) $(CFLAGS) $(LDFLAGS) $(STATICBUILD) -o $@ $^ $(LIBS)
+ ifdef X_COMPILE
+ 	mv $@ $@.exe
+ 	echo "#!/bin/sh" > $@
+@@ -45,7 +46,7 @@
+ endif
  
  registercodec: ../loader/modify_reg.c ../loader/registry.c
 -	$(CC) $(STATICBUILD) -I../loader -I../loader/compat -o $@ $<
@@ -39,28 +44,3 @@ diff -Nur dshowserver-svn82.orig/dshowserver/Makefile dshowserver-svn82.new/dsho
  
  
  $(OBJDIR):
-diff -Nur dshowserver-svn82.orig/loader/Makefile dshowserver-svn82.new/loader/Makefile
---- dshowserver-svn82.orig/loader/Makefile	2008-11-01 18:03:29.000000000 +0100
-+++ dshowserver-svn82.new/loader/Makefile	2008-11-03 13:13:48.000000000 +0100
-@@ -43,12 +43,13 @@
- INC_COMMON := $(shell ls *.h */*.h)
- 
- ifdef DEBUG
--  CFLAGS+=-g
-+  OPTFLAGS+=-g
- else
--  CFLAGS+=-O2
-+  OPTFLAGS+=-O2
- endif
- CFLAGS+=-Icompat -Idshow -Wdisabled-optimization -Wno-pointer-sign -Wdeclaration-after-statement -I. -Wall -Wno-switch -Wpointer-arith -Wredundant-decls -pipe -ffast-math -fomit-frame-pointer -D_LARGEFILE_SOURCE
- CFLAGS+=-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
-+CFLAGS+= $(OPTFLAGS)
- CFLAGS+= $(CFLAGS-yes)
- 
- all: $(OBJDIR) $(OBJDIR)/$(LIBNAME_COMMON)
-@@ -78,4 +79,4 @@
- 	$(CC) $(CFLAGS) -o $@ -c $<
- 
- $(OBJDIR)/%.o: %.S
--	$(AS) -o $@ $<
-+	$(CC) $(CFLAGS) -o $@ -c $<
