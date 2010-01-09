@@ -2,7 +2,7 @@
 %bcond_with	static	# static package for use with x86_64 systems
 #
 
-%define		svn			82
+%define		svn			101
 %define		rel			0.1
 Summary:	Win32 CoreAVC H.264 codec helper
 Summary(pl.UTF-8):	Serwer windowsowego kodeka CoreAVC H.264.
@@ -12,7 +12,7 @@ Release:	0.%{svn}.%{rel}
 License:	GPL
 Group:		X11/Applications/Multimedia
 Source0:	%{name}-0.svn%{svn}.tar.bz2
-# Source0-md5:	648492583080c4359040358453670452
+# Source0-md5:	9fa17ea92a3d78c34f251a4c56bbd750
 Patch0:		%{name}-codecspath.patch
 Patch1:		%{name}-optflags.patch
 URL:		http://code.google.com/p/coreavc-for-linux/
@@ -24,7 +24,7 @@ BuildRequires:	gcc-multilib
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.453
 BuildRequires:	sed >= 4.0
-ExclusiveArch:	%{ix86} %{x8664}
+ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		x8664_flags	-m32
@@ -68,7 +68,7 @@ H.264.
 %prep
 %setup -q -n %{name}-svn%{svn}
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
 
 %if "%{cc_version}" < "3.4"
 # CC version is arbitary (just to be > 3.3)
