@@ -1,13 +1,10 @@
-# Conditional build:
-#
-
 %define		svn			101
 Summary:	Win32 CoreAVC H.264 codec helper
 Summary(pl.UTF-8):	Serwer windowsowego kodeka CoreAVC H.264.
 Name:		dshowserver
 Version:	0.%{svn}
 Release:	0.1
-License:	GPL
+License:	GPL v2
 Group:		X11/Applications/Multimedia
 Source0:	%{name}-0.svn%{svn}.tar.bz2
 # Source0-md5:	9a5fefb6dc8e34114ae9ca99ee799eea
@@ -45,18 +42,18 @@ mplayer i xine. Dshowserver moze byc uzyty w architekturach x86 i
 x86_64. Jezeli twoj system jest 64 bitowy. Uzyj statycznych binariow
 zbudowanych w 32 bitowym srodowisku.
 
-#%package -n registercodec
-#Summary:	Utility to register win32 CoreAVC H.264 codec
-#Summary(pl.UTF-8):	Narzedzie do rejestracji windowsowego kodeka CoreAVC H.264.
-#Group:		X11/Applications/Multimedia
+%package -n registercodec
+Summary:	Utility to register win32 CoreAVC H.264 codec
+Summary(pl.UTF-8):	Narzedzie do rejestracji windowsowego kodeka CoreAVC H.264.
+Group:		X11/Applications/Multimedia
 
-#%description -n registercodec
-#Utility to register win32 CoreAVC H.264 codec for usage with
-#mythtv/mplayer/xine.
+%description -n registercodec
+Utility to register win32 CoreAVC H.264 codec for usage with
+mythtv/mplayer/xine.
 
-#%description -n registercodec -l pl.UTF-8
-#Narzedzie do przeprowadzenia rejestracji komercyjnego kodeka CoreAVC
-#H.264.
+%description -n registercodec -l pl.UTF-8
+Narzedzie do przeprowadzenia rejestracji komercyjnego kodeka CoreAVC
+H.264.
 
 %prep
 %setup -q -n %{name}-svn%{svn}
@@ -70,11 +67,11 @@ zbudowanych w 32 bitowym srodowisku.
 
 %build
 
-%{__make} 
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} install -C dshowserver PREFIX=$RPM_BUILD_ROOT/usr
+%{__make} install -C dshowserver PREFIX=$RPM_BUILD_ROOT%{_prefix}
 install  -d $RPM_BUILD_ROOT%{_mandir}/man1
 #install dshowserver/dshowserver $RPM_BUILD_ROOT%{_bindir}/dshowserver
 #install dshowserver/registercodec $RPM_BUILD_ROOT%{_bindir}/registercodec
@@ -90,7 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,video) %{_libdir}/dshowserver/dshowserver.exe.so
 %{_mandir}/man1/ds*
 
-#%files -n registercodec
-#%defattr(644,root,root,755)
-#%attr(755,root,video) %{_bindir}/registercodec
-#%{_mandir}/man1/re*
+%if 0
+%files -n registercodec
+%defattr(644,root,root,755)
+%attr(755,root,video) %{_bindir}/registercodec
+%{_mandir}/man1/re*
+%endif
