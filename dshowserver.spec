@@ -3,7 +3,7 @@ Summary:	Win32 CoreAVC H.264 codec helper
 Summary(pl.UTF-8):	Serwer windowsowego kodeka CoreAVC H.264.
 Name:		dshowserver
 Version:	0.%{svn}
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		X11/Applications/Multimedia
 Source0:	%{name}-0.svn%{svn}.tar.bz2
