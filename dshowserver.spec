@@ -76,24 +76,19 @@ zbudowanych w 32 bitowym srodowisku.
 rm -rf $RPM_BUILD_ROOT
 %{__make} install -C dshowserver PREFIX=$RPM_BUILD_ROOT/usr
 install  -d $RPM_BUILD_ROOT%{_mandir}/man1
-install  -d $RPM_BUILD_ROOT%{_docdir}/%{name}-0.svn%{svn}
 #install dshowserver/dshowserver $RPM_BUILD_ROOT%{_bindir}/dshowserver
 #install dshowserver/registercodec $RPM_BUILD_ROOT%{_bindir}/registercodec
 cp -a man/ds* $RPM_BUILD_ROOT%{_mandir}/man1
-cp -a {COPYING,README} $RPM_BUILD_ROOT%{_docdir}/%{name}-0.svn%{svn}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-echo "How to use that - check %{_docdir}/%{name}-0.svn%{svn}/README"
-
 %files
 %defattr(644,root,root,755)
+%doc README
 %attr(755,root,video) %{_bindir}/dshowserver
 %attr(755,root,video) %{_libdir}/dshowserver/dshowserver.exe.so
 %{_mandir}/man1/ds*
-%{_docdir}/%{name}-0.svn%{svn}/*
 
 #%files -n registercodec
 #%defattr(644,root,root,755)
