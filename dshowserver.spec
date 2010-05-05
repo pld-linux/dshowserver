@@ -66,7 +66,6 @@ H.264.
 %endif
 
 %build
-
 %{__make}
 
 %install
