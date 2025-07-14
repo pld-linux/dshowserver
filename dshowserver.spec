@@ -57,8 +57,8 @@ H.264.
 
 %prep
 %setup -q -n %{name}-svn%{svn}
-%patch0 -p1
-%patch1 -p1
+%patch -P0 -p1
+%patch -P1 -p1
 
 %if "%{cc_version}" < "3.4"
 # CC version is arbitary (just to be > 3.3)
